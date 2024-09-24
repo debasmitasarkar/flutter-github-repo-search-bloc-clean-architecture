@@ -1,0 +1,39 @@
+name: git_repo_search
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  dartz: ^0.10.1
+  json_annotation: ^4.9.0
+  http: ^1.2.2
+  shimmer: ^3.0.0
+  auto_route: ^9.2.2
+  get_it: ^7.7.0
+  rxdart: ^0.28.0
+  intl: ^0.19.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+  network_image_mock: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.12
+  auto_route_generator: ^9.0.0
+
+
+flutter:
+  uses-material-design: true

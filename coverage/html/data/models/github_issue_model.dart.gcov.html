@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - data/models/github_issue_model.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory data/models">data/models</a> - github_issue_model.dart<span style="font-size: 80%;"> (source / <a href="github_issue_model.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">10</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-25 02:24:55</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : import 'package:git_repo_search/domain/entities/github_issue.dart';</span>
+<span id="L2"><span class="lineNum">       2</span>              : import 'package:json_annotation/json_annotation.dart';</span>
+<span id="L3"><span class="lineNum">       3</span>              : </span>
+<span id="L4"><span class="lineNum">       4</span>              : part 'github_issue_model.g.dart';</span>
+<span id="L5"><span class="lineNum">       5</span>              : </span>
+<span id="L6"><span class="lineNum">       6</span>              : @JsonSerializable()</span>
+<span id="L7"><span class="lineNum">       7</span>              : class GithubIssueModel extends GithubIssue {</span>
+<span id="L8"><span class="lineNum">       8</span> <span class="tlaGNC tlaBgGNC">           3 :   GithubIssueModel({</span></span>
+<span id="L9"><span class="lineNum">       9</span>              :     required this.issueId,</span>
+<span id="L10"><span class="lineNum">      10</span>              :     required this.issueTitle,</span>
+<span id="L11"><span class="lineNum">      11</span>              :     required this.issueNumber,</span>
+<span id="L12"><span class="lineNum">      12</span>              :     required this.createdByUser,</span>
+<span id="L13"><span class="lineNum">      13</span>              :     required this.commentsCount,</span>
+<span id="L14"><span class="lineNum">      14</span>              :     required this.createdAtByUser,</span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaGNC">           3 :   }) : super(</span></span>
+<span id="L16"><span class="lineNum">      16</span>              :           id: issueId,</span>
+<span id="L17"><span class="lineNum">      17</span>              :           title: issueTitle,</span>
+<span id="L18"><span class="lineNum">      18</span>              :           number: issueNumber,</span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">           3 :           user: createdByUser.login,</span></span>
+<span id="L20"><span class="lineNum">      20</span>              :           comments: commentsCount,</span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">           3 :           createdAt: DateTime.parse(createdAtByUser),</span></span>
+<span id="L22"><span class="lineNum">      22</span>              :         );</span>
+<span id="L23"><span class="lineNum">      23</span>              : </span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           2 :   factory GithubIssueModel.fromJson(Map&lt;String, dynamic&gt; json) =&gt;</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           2 :       _$GithubIssueModelFromJson(json);</span></span>
+<span id="L26"><span class="lineNum">      26</span>              :   @JsonKey(name: 'id')</span>
+<span id="L27"><span class="lineNum">      27</span>              :   final int issueId;</span>
+<span id="L28"><span class="lineNum">      28</span>              :   @JsonKey(name: 'title')</span>
+<span id="L29"><span class="lineNum">      29</span>              :   final String issueTitle;</span>
+<span id="L30"><span class="lineNum">      30</span>              :   @JsonKey(name: 'number')</span>
+<span id="L31"><span class="lineNum">      31</span>              :   final int issueNumber;</span>
+<span id="L32"><span class="lineNum">      32</span>              :   @JsonKey(name: 'user')</span>
+<span id="L33"><span class="lineNum">      33</span>              :   final User createdByUser;</span>
+<span id="L34"><span class="lineNum">      34</span>              :   @JsonKey(name: 'comments')</span>
+<span id="L35"><span class="lineNum">      35</span>              :   final int commentsCount;</span>
+<span id="L36"><span class="lineNum">      36</span>              :   @JsonKey(name: 'created_at')</span>
+<span id="L37"><span class="lineNum">      37</span>              :   final String createdAtByUser;</span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           2 :   Map&lt;String, dynamic&gt; toJson() =&gt; _$GithubIssueModelToJson(this);</span></span>
+<span id="L39"><span class="lineNum">      39</span>              : }</span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              : @JsonSerializable()</span>
+<span id="L42"><span class="lineNum">      42</span>              : class User {</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           3 :   User({</span></span>
+<span id="L44"><span class="lineNum">      44</span>              :     required this.login,</span>
+<span id="L45"><span class="lineNum">      45</span>              :   });</span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           4 :   factory User.fromJson(Map&lt;String, dynamic&gt; json) =&gt; _$UserFromJson(json);</span></span>
+<span id="L48"><span class="lineNum">      48</span>              :   final String login;</span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           4 :   Map&lt;String, dynamic&gt; toJson() =&gt; _$UserToJson(this);</span></span>
+<span id="L50"><span class="lineNum">      50</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
