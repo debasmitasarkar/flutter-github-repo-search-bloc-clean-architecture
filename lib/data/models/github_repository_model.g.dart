@@ -7,7 +7,8 @@ part of 'github_repository_model.dart';
 // **************************************************************************
 
 GithubRepositoryModel _$GithubRepositoryModelFromJson(
-        Map<String, dynamic> json) =>
+  Map<String, dynamic> json,
+) =>
     GithubRepositoryModel(
       repoId: (json['id'] as num).toInt(),
       repoName: json['name'] as String,
@@ -24,7 +25,8 @@ GithubRepositoryModel _$GithubRepositoryModelFromJson(
     );
 
 Map<String, dynamic> _$GithubRepositoryModelToJson(
-        GithubRepositoryModel instance) =>
+  GithubRepositoryModel instance,
+) =>
     <String, dynamic>{
       'id': instance.repoId,
       'name': instance.repoName,

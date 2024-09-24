@@ -7,11 +7,10 @@ import 'package:git_repo_search/domain/entities/github_repository.dart';
 import 'package:git_repo_search/domain/repositories/github_repo_search_repository.dart';
 
 class GithubRepoSearchRepositoryImpl implements GithubRepoSearchRepository {
-  final GitHubRepoRemoteDataSource remoteDataSource;
-
   GithubRepoSearchRepositoryImpl({
     required this.remoteDataSource,
   });
+  final GitHubRepoRemoteDataSource remoteDataSource;
 
   @override
   Future<Either<Failure, List<GithubRepository>>>
@@ -22,7 +21,10 @@ class GithubRepoSearchRepositoryImpl implements GithubRepoSearchRepository {
   }) async {
     try {
       final result = await remoteDataSource.getRepositoriesWithSearchQuery(
-          searchQuery: searchQuery, page: page, sort: sort);
+        searchQuery: searchQuery,
+        page: page,
+        sort: sort,
+      );
       return Right(result);
     } on ServerException {
       return Left(ServerFailure());
@@ -38,10 +40,11 @@ class GithubRepoSearchRepositoryImpl implements GithubRepoSearchRepository {
   }) async {
     try {
       final result = await remoteDataSource.getRepositoryOpenIssues(
-          ownerName: ownerName,
-          repositoryName: repositoryName,
-          sort: sort,
-          page: page);
+        ownerName: ownerName,
+        repositoryName: repositoryName,
+        sort: sort,
+        page: page,
+      );
       return Right(result);
     } on ServerException {
       return Left(ServerFailure());

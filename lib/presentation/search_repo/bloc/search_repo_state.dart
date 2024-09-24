@@ -11,9 +11,8 @@ class SearchRepoInitial extends SearchRepoState {}
 class SearchRepoLoading extends SearchRepoState {}
 
 class SearchRepoLoaded extends SearchRepoState {
-  final List<GithubRepository> repositories;
-
   SearchRepoLoaded({required this.repositories});
+  final List<GithubRepository> repositories;
 
   @override
   List<Object?> get props => [repositories];
@@ -25,9 +24,8 @@ class SearchRepoLoadingMore extends SearchRepoLoaded {
 }
 
 class SearchError extends SearchRepoState {
-  final String message;
-
   SearchError({required this.message});
+  final String message;
 
   @override
   List<Object?> get props => [message];

@@ -1,13 +1,13 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_detail_state.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:git_repo_search/domain/entities/github_issue.dart';
 import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_detail_bloc.dart';
 import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_detail_event.dart';
+import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_detail_state.dart';
 import 'package:git_repo_search/presentation/search_repo_detail/search_detail_page.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockSearchDetailBloc
     extends MockBloc<SearchDetailEvent, SearchDetailState>
@@ -67,7 +67,7 @@ void main() {
 
   testWidgets('shows loading indicator while loading',
       (WidgetTester tester) async {
-    when(() => mockSearchDetailBloc.state).thenReturn(SearchDetailLoading());
+    when(() => mockSearchDetailBloc.state).thenReturn(SearchDetailInitial());
     await tester.pumpWidget(buildTestableWidget());
 
     expect(find.byType(ShimmerIssueCard), findsWidgets);
@@ -91,5 +91,70 @@ void main() {
     await tester.pumpWidget(buildTestableWidget());
 
     expect(find.text('Server Error'), findsOneWidget);
+  });
+
+  testWidgets('fetches more repositories when scrolled to the bottom',
+      (WidgetTester tester) async {
+    final tIssues = List.generate(
+      20,
+      (index) => GithubIssue(
+        id: index,
+        title: 'Test Issue $index',
+        number: index,
+        comments: index,
+        createdAt: DateTime.now().subtract(Duration(days: index)),
+        user: 'user$index',
+      ),
+    );
+
+    when(() => mockSearchDetailBloc.state)
+        .thenReturn(SearchDetailLoaded(issues: tIssues));
+
+    await tester.pumpWidget(buildTestableWidget());
+
+    await tester.drag(find.byType(ListView), const Offset(0, -2400));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => mockSearchDetailBloc.add(
+        FetchIssuesEvent(
+          ownerName: 'testOwner',
+          repoName: 'testRepo',
+        ),
+      ),
+    ).called(2);
+  });
+
+  testWidgets('calls onRefresh when pull to refresh is triggered',
+      (WidgetTester tester) async {
+    final tIssues = List.generate(
+      20,
+      (index) => GithubIssue(
+        id: index,
+        title: 'Test Issue $index',
+        number: index,
+        comments: index,
+        createdAt: DateTime.now().subtract(Duration(days: index)),
+        user: 'user$index',
+      ),
+    );
+
+    when(() => mockSearchDetailBloc.state)
+        .thenReturn(SearchDetailLoaded(issues: tIssues));
+
+    await tester.pumpWidget(buildTestableWidget());
+
+    await tester.drag(find.byType(RefreshIndicator), const Offset(0, 300));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => mockSearchDetailBloc.add(
+        FetchIssuesEvent(
+          ownerName: 'testOwner',
+          repoName: 'testRepo',
+          isRefresh: true,
+        ),
+      ),
+    ).called(1);
   });
 }

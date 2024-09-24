@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:git_repo_search/core/constants/style_constants.dart';
 import 'package:git_repo_search/core/router/app_router.dart';
 import 'package:git_repo_search/core/utils/locator.dart';
 
@@ -29,21 +30,19 @@ class _MyAppState extends State<MyApp> {
       title: 'Github Repo Search',
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
-            systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.black,
-          statusBarIconBrightness: Brightness.light,
-          systemNavigationBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: Colors.black,
-        )),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: ColorConstants.black100,
+            statusBarIconBrightness: Brightness.light,
+            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarColor: ColorConstants.black100,
+          ),
+        ),
         useMaterial3: true,
         brightness: Brightness.dark,
-        primaryColor: Colors.blue[800],
-        highlightColor: Colors.blue[600],
+        primaryColor: ColorConstants.blue800,
+        highlightColor: ColorConstants.blue600,
         fontFamily: 'Roboto',
         textTheme: const TextTheme(
-          headlineLarge: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          headlineMedium:
-              TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
           bodySmall: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         ),
       ),

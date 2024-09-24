@@ -25,7 +25,8 @@ void main() {
   setUp(() {
     mockFetchRepositoriesBySearch = MockFetchRepositoriesBySearch();
     searchRepoBloc = SearchRepoBloc(
-        fetchRepositoriesBySearch: mockFetchRepositoriesBySearch);
+      fetchRepositoriesBySearch: mockFetchRepositoriesBySearch,
+    );
   });
 
   tearDown(() {
@@ -69,11 +70,15 @@ void main() {
       SearchRepoLoaded(repositories: tRepositories),
     ],
     verify: (bloc) {
-      verify(() => mockFetchRepositoriesBySearch(const SearchParams(
+      verify(
+        () => mockFetchRepositoriesBySearch(
+          const SearchParams(
             searchQuery: tSearchQuery,
             page: 1,
-            sort: 'full_name',
-          ))).called(1);
+            sort: '',
+          ),
+        ),
+      ).called(1);
     },
   );
 
@@ -86,11 +91,9 @@ void main() {
     },
     seed: () => SearchRepoLoaded(repositories: tRepositories),
     act: (bloc) async {
-      searchRepoBloc
-          .add(FetchRepositories(searchQuery: tSearchQuery, currentPage: 1));
+      searchRepoBloc.add(FetchRepositories(searchQuery: tSearchQuery));
       await Future.delayed(const Duration(milliseconds: 500));
-      searchRepoBloc
-          .add(FetchRepositories(searchQuery: tSearchQuery, currentPage: 2));
+      searchRepoBloc.add(FetchRepositories(searchQuery: tSearchQuery));
       await Future.delayed(const Duration(milliseconds: 500));
     },
     expect: () => [
@@ -100,11 +103,15 @@ void main() {
       SearchRepoLoaded(repositories: [...tRepositories, ...tRepositories]),
     ],
     verify: (bloc) {
-      verify(() => mockFetchRepositoriesBySearch(const SearchParams(
+      verify(
+        () => mockFetchRepositoriesBySearch(
+          const SearchParams(
             searchQuery: tSearchQuery,
             page: 2,
-            sort: 'full_name',
-          ))).called(1);
+            sort: '',
+          ),
+        ),
+      ).called(1);
     },
   );
 
@@ -124,11 +131,15 @@ void main() {
       SearchError(message: 'Server Failure'),
     ],
     verify: (bloc) {
-      verify(() => mockFetchRepositoriesBySearch(const SearchParams(
+      verify(
+        () => mockFetchRepositoriesBySearch(
+          const SearchParams(
             searchQuery: tSearchQuery,
             page: 1,
-            sort: 'full_name',
-          ))).called(1);
+            sort: '',
+          ),
+        ),
+      ).called(1);
     },
   );
 
@@ -139,5 +150,31 @@ void main() {
     },
     act: (bloc) => bloc.add(FetchRepositories(searchQuery: '')),
     expect: () => [SearchRepoInitial()],
+  );
+
+  blocTest<SearchRepoBloc, SearchRepoState>(
+    'emits [SearchRepoLoaded] when data is empty',
+    build: () {
+      when(() => mockFetchRepositoriesBySearch(any()))
+          .thenAnswer((_) async => const Right([]));
+      return searchRepoBloc;
+    },
+    act: (bloc) async {
+      bloc.add(FetchRepositories(searchQuery: tSearchQuery));
+      await Future.delayed(const Duration(milliseconds: 500));
+    },
+    expect: () =>
+        [SearchRepoLoading(), SearchRepoLoaded(repositories: const [])],
+    verify: (bloc) {
+      verify(
+        () => mockFetchRepositoriesBySearch(
+          const SearchParams(
+            searchQuery: tSearchQuery,
+            page: 1,
+            sort: '',
+          ),
+        ),
+      ).called(1);
+    },
   );
 }

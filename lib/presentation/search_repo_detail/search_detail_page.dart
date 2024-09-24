@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:git_repo_search/core/constants/style_constants.dart';
 import 'package:git_repo_search/core/utils/extensions.dart';
 import 'package:git_repo_search/core/utils/locator.dart';
 import 'package:git_repo_search/domain/entities/github_issue.dart';
@@ -13,14 +14,13 @@ import 'package:shimmer/shimmer.dart';
 
 @RoutePage()
 class SearchDetailPage extends StatefulWidget implements AutoRouteWrapper {
-  final String ownerName;
-  final String repoName;
-
   const SearchDetailPage({
     required this.ownerName,
     required this.repoName,
     super.key,
   });
+  final String ownerName;
+  final String repoName;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -57,6 +57,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -68,7 +69,6 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
         FetchIssuesEvent(
           ownerName: widget.ownerName,
           repoName: widget.repoName,
-          page: bloc.currentPage + 1,
         ),
       );
     }
@@ -88,14 +88,15 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Open Issues',
-              style: Theme.of(context).textTheme.titleMedium),
+          title: Text(
+            'Open Issues',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         body: BlocBuilder<SearchDetailBloc, SearchDetailState>(
           builder: (context, state) {
             switch (state) {
               case SearchDetailInitial _:
-              case SearchDetailLoading _:
                 return ListView.builder(
                   itemCount: 20,
                   itemBuilder: (context, index) {
@@ -105,6 +106,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
               case SearchDetailLoaded _:
                 final isLoadingMore = state is SearchDetailLoadingMore;
                 return ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   controller: _scrollController,
                   itemCount: state.issues.length + (isLoadingMore ? 20 : 0),
                   itemBuilder: (context, index) {
@@ -130,9 +132,8 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
 }
 
 class IssueCard extends StatelessWidget {
-  final GithubIssue issue;
-
   const IssueCard({super.key, required this.issue});
+  final GithubIssue issue;
 
   @override
   Widget build(BuildContext context) {
@@ -146,20 +147,14 @@ class IssueCard extends StatelessWidget {
           children: [
             Text(
               '#${issue.number} - ${issue.title}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
+              style: TextStyleConstants.largeBold,
               overflow: TextOverflow.ellipsis,
               maxLines: 4,
             ),
             const SizedBox(height: 8.0),
             Text(
               DateFormat.yMMMd().format(issue.createdAt),
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12.0,
-              ),
+              style: TextStyleConstants.smNormal,
             ),
             const SizedBox(height: 8.0),
             Row(
@@ -167,11 +162,17 @@ class IssueCard extends StatelessWidget {
               children: [
                 Text(
                   'Opened by ${issue.user}',
-                  style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+                  style: TextStyleConstants.bodyNormal.copyWith(
+                    color: ColorConstants.grey100,
+                  ),
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.comment, size: 16, color: Colors.grey),
+                    const Icon(
+                      Icons.comment,
+                      size: 16,
+                      color: ColorConstants.grey100,
+                    ),
                     const SizedBox(width: 4),
                     Text('${issue.comments}'),
                   ],
@@ -191,12 +192,12 @@ class ShimmerIssueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[900],
+      color: ColorConstants.grey900,
       elevation: 2.0,
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[800]!,
-        highlightColor: Colors.grey[700]!,
+        baseColor: ColorConstants.grey800,
+        highlightColor: ColorConstants.grey700,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -205,13 +206,13 @@ class ShimmerIssueCard extends StatelessWidget {
               Container(
                 width: double.infinity,
                 height: 20.0,
-                color: Colors.grey[800],
+                color: ColorConstants.grey800,
               ),
               const SizedBox(height: 10),
               Container(
                 width: 150,
                 height: 18.0,
-                color: Colors.grey[800],
+                color: ColorConstants.grey800,
               ),
               const SizedBox(height: 10),
               Row(
@@ -220,20 +221,20 @@ class ShimmerIssueCard extends StatelessWidget {
                   Container(
                     width: 120,
                     height: 16.0,
-                    color: Colors.grey[800],
+                    color: ColorConstants.grey800,
                   ),
                   Row(
                     children: [
                       Container(
                         width: 16.0,
                         height: 16.0,
-                        color: Colors.grey[800],
+                        color: ColorConstants.grey800,
                       ),
                       const SizedBox(width: 8),
                       Container(
                         width: 30.0,
                         height: 16.0,
-                        color: Colors.grey[800],
+                        color: ColorConstants.grey800,
                       ),
                     ],
                   ),

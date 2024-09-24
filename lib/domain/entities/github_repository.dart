@@ -1,18 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class GithubRepository extends Equatable {
-  final int id;
-  final String name;
-  final String fullName;
-  final String ownerName;
-  final String ownerAvatarUrl;
-  final String? description;
-  final int size;
-  final int stargazersCount;
-  final int forksCount;
-  final String? license;
-  final int openIssuesCount;
-
   const GithubRepository({
     required this.id,
     required this.name,
@@ -26,6 +14,17 @@ class GithubRepository extends Equatable {
     this.license,
     required this.openIssuesCount,
   });
+  final int id;
+  final String name;
+  final String fullName;
+  final String ownerName;
+  final String ownerAvatarUrl;
+  final String? description;
+  final int size;
+  final int stargazersCount;
+  final int forksCount;
+  final String? license;
+  final int openIssuesCount;
 
   @override
   List<Object?> get props => [id];

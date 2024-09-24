@@ -7,14 +7,14 @@ import 'package:git_repo_search/domain/repositories/github_repo_search_repositor
 
 class FetchIssuesByRepo
     extends BaseUsecase<List<GithubIssue>, FetchIssuesByRepoParams> {
-  final GithubRepoSearchRepository repository;
-
   FetchIssuesByRepo(this.repository);
+  final GithubRepoSearchRepository repository;
 
   @override
   Future<Either<Failure, List<GithubIssue>>> call(
-      FetchIssuesByRepoParams params) async {
-    return await repository.getRepositoryOpenIssues(
+    FetchIssuesByRepoParams params,
+  ) async {
+    return repository.getRepositoryOpenIssues(
       ownerName: params.ownerName,
       page: params.page,
       sort: 'created',
@@ -24,15 +24,14 @@ class FetchIssuesByRepo
 }
 
 class FetchIssuesByRepoParams extends Equatable {
-  final String ownerName;
-  final String repoName;
-  final int page;
-
   const FetchIssuesByRepoParams({
     required this.ownerName,
     required this.repoName,
     required this.page,
   });
+  final String ownerName;
+  final String repoName;
+  final int page;
 
   @override
   List<Object?> get props => [ownerName, repoName, page];

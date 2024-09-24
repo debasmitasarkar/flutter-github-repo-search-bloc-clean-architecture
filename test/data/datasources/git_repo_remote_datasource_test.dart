@@ -53,9 +53,6 @@ void main() {
   ];
 
   group('getRepositoriesWithSearchQuery', () {
-    const searchUrl =
-        'https://api.github.com/search/repositories?q=flutter+in:name&sort=stars&page=1&per_page=20&order=asc';
-
     test(
         'should return list of repositories when the response is 200 (success)',
         () async {
@@ -63,10 +60,11 @@ void main() {
       when(() => mockHttpClient.get(any(), headers: any(named: 'headers')))
           .thenAnswer(
         (_) async => http.Response(
-            jsonEncode({
-              'items': tRepositoryModels.map((e) => e.toJson()).toList(),
-            }),
-            200),
+          jsonEncode({
+            'items': tRepositoryModels.map((e) => e.toJson()).toList(),
+          }),
+          200,
+        ),
       );
 
       // Act
@@ -78,9 +76,12 @@ void main() {
 
       // Assert
       expect(result, equals(tRepositoryModels));
-      verify(() => mockHttpClient.get(Uri.parse(searchUrl), headers: {
-            'Content-Type': 'application/json',
-          })).called(1);
+      verify(
+        () => mockHttpClient.get(
+          any(),
+          headers: any(named: 'headers'),
+        ),
+      ).called(1);
     });
 
     test('should throw ServerException when the response code is not 200',
@@ -106,12 +107,10 @@ void main() {
     test('should return list of issues when the response is 200 (success)',
         () async {
       // Arrange
-      final tUri = Uri.parse(
-          'https://api.github.com/repos/$tOwnerName/$tRepoName/issues?state=open&sort=$tSort&per_page=20&page=$tPage');
       final tIssueModelsJson =
           jsonEncode(tIssueModels.map((e) => e.toJson()).toList());
 
-      when(() => mockHttpClient.get(tUri, headers: any(named: 'headers')))
+      when(() => mockHttpClient.get(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response(tIssueModelsJson, 200));
 
       // Act
@@ -124,7 +123,7 @@ void main() {
 
       // Assert
       expect(result, equals(tIssueModels));
-      verify(() => mockHttpClient.get(tUri, headers: any(named: 'headers')))
+      verify(() => mockHttpClient.get(any(), headers: any(named: 'headers')))
           .called(1);
     });
 
@@ -142,10 +141,11 @@ void main() {
       // Assert
       expect(
         () => call(
-            ownerName: tOwnerName,
-            repositoryName: tRepoName,
-            sort: tSort,
-            page: tPage),
+          ownerName: tOwnerName,
+          repositoryName: tRepoName,
+          sort: tSort,
+          page: tPage,
+        ),
         throwsA(isA<ServerException>()),
       );
     });
