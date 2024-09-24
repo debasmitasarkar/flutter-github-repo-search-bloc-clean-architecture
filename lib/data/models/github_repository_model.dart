@@ -5,26 +5,6 @@ part 'github_repository_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class GithubRepositoryModel extends GithubRepository {
-  @JsonKey(name: 'id')
-  final int repoId;
-  @JsonKey(name: 'name')
-  final String repoName;
-  @JsonKey(name: 'full_name')
-  final String repoFullName;
-  final Owner owner;
-  @JsonKey(name: 'description')
-  final String? repoDescription;
-  @JsonKey(name: 'size')
-  final int repoSize;
-  @JsonKey(name: 'stargazers_count')
-  final int repoStargazersCount;
-  @JsonKey(name: 'forks_count')
-  final int repoForksCount;
-  @JsonKey(name: 'license')
-  final License? repoLicense;
-  @JsonKey(name: 'open_issues_count')
-  final int repoOpenIssuesCount;
-
   GithubRepositoryModel({
     required this.repoId,
     required this.repoName,
@@ -52,16 +32,30 @@ class GithubRepositoryModel extends GithubRepository {
 
   factory GithubRepositoryModel.fromJson(Map<String, dynamic> json) =>
       _$GithubRepositoryModelFromJson(json);
+  @JsonKey(name: 'id')
+  final int repoId;
+  @JsonKey(name: 'name')
+  final String repoName;
+  @JsonKey(name: 'full_name')
+  final String repoFullName;
+  final Owner owner;
+  @JsonKey(name: 'description')
+  final String? repoDescription;
+  @JsonKey(name: 'size')
+  final int repoSize;
+  @JsonKey(name: 'stargazers_count')
+  final int repoStargazersCount;
+  @JsonKey(name: 'forks_count')
+  final int repoForksCount;
+  @JsonKey(name: 'license')
+  final License? repoLicense;
+  @JsonKey(name: 'open_issues_count')
+  final int repoOpenIssuesCount;
   Map<String, dynamic> toJson() => _$GithubRepositoryModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class Owner {
-  @JsonKey(name: 'avatar_url')
-  final String avatarUrl;
-  final int id;
-  final String login;
-
   Owner({
     required this.id,
     required this.avatarUrl,
@@ -69,18 +63,21 @@ class Owner {
   });
 
   factory Owner.fromJson(Map<String, dynamic> json) => _$OwnerFromJson(json);
+  @JsonKey(name: 'avatar_url')
+  final String avatarUrl;
+  final int id;
+  final String login;
   Map<String, dynamic> toJson() => _$OwnerToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class License {
-  final String name;
-
   License({
     required this.name,
   });
 
   factory License.fromJson(Map<String, dynamic> json) =>
       _$LicenseFromJson(json);
+  final String name;
   Map<String, dynamic> toJson() => _$LicenseToJson(this);
 }
