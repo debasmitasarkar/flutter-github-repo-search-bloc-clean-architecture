@@ -7,28 +7,30 @@ import 'package:git_repo_search/domain/repositories/github_repo_search_repositor
 
 class FetchRepositoriesBySearch
     implements BaseUsecase<List<GithubRepository>, SearchParams> {
-  final GithubRepoSearchRepository repository;
-
   FetchRepositoriesBySearch(this.repository);
+  final GithubRepoSearchRepository repository;
 
   @override
   Future<Either<Failure, List<GithubRepository>>> call(
-      SearchParams params) async {
-    return await repository.getRepositoriesWithSearchQuery(
-        searchQuery: params.searchQuery, page: params.page, sort: params.sort);
+    SearchParams params,
+  ) async {
+    return repository.getRepositoriesWithSearchQuery(
+      searchQuery: params.searchQuery,
+      page: params.page,
+      sort: params.sort,
+    );
   }
 }
 
 class SearchParams extends Equatable {
-  final String searchQuery;
-  final int page;
-  final String sort;
-
   const SearchParams({
     required this.searchQuery,
     required this.page,
     required this.sort,
   });
+  final String searchQuery;
+  final int page;
+  final String sort;
 
   @override
   List<Object> get props => [searchQuery, page, sort];

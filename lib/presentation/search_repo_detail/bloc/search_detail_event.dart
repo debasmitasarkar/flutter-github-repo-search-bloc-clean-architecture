@@ -1,23 +1,17 @@
 import 'package:equatable/equatable.dart';
 
-abstract class SearchDetailEvent extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
+abstract class SearchDetailEvent extends Equatable {}
 
 class FetchIssuesEvent extends SearchDetailEvent {
-  final String ownerName;
-  final String repoName;
-  final bool isRefresh;
-  final int page;
-
   FetchIssuesEvent({
     required this.ownerName,
     required this.repoName,
     this.isRefresh = false,
-    this.page = 1,
   });
+  final String ownerName;
+  final String repoName;
+  final bool isRefresh;
 
   @override
-  List<Object?> get props => [ownerName, repoName, isRefresh, page];
+  List<Object?> get props => [ownerName, repoName, isRefresh];
 }

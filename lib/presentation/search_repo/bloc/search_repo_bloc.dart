@@ -1,57 +1,65 @@
 import 'package:dartz/dartz.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:git_repo_search/core/error/failures.dart';
 import 'package:git_repo_search/domain/entities/github_repository.dart';
 import 'package:git_repo_search/domain/usecases/fetch_respositories_by_search.dart';
 import 'package:git_repo_search/presentation/search_repo/bloc/search_repo_event.dart';
 import 'package:git_repo_search/presentation/search_repo/bloc/search_repo_state.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SearchRepoBloc extends Bloc<SearchRepoEvent, SearchRepoState> {
+  SearchRepoBloc({required this.fetchRepositoriesBySearch})
+      : super(SearchRepoInitial()) {
+    on<FetchRepositories>(
+      _onFetchRepositories,
+      transformer: _debounceSearchEvent(),
+    );
+  }
   final FetchRepositoriesBySearch fetchRepositoriesBySearch;
 
   String _currentQuery = '';
-  final String _sort = 'full_name';
   bool _isFetching = false;
   bool _hasReachedMax = false;
   List<GithubRepository> _repositories = [];
   int _currentPage = 1;
-  int get currentPage => _currentPage;
 
-  SearchRepoBloc({required this.fetchRepositoriesBySearch})
-      : super(SearchRepoInitial()) {
-    on<FetchRepositories>(_onFetchRepositories,
-        transformer: _debounceSearchEvent());
+  EventTransformer<FetchRepositories> _debounceSearchEvent() => (
+        events,
+        mapper,
+      ) =>
+          events
+              .debounceTime(const Duration(milliseconds: 300))
+              .switchMap(mapper);
+
+  void _resetData() {
+    _isFetching = false;
+    _hasReachedMax = false;
+    _currentPage = 1;
+    _repositories.clear();
   }
-
-  EventTransformer<FetchRepositories> _debounceSearchEvent() => (events,
-          mapper) =>
-      events.debounceTime(const Duration(milliseconds: 300)).switchMap(mapper);
 
   Future<void> _onFetchRepositories(
     FetchRepositories event,
     Emitter<SearchRepoState> emit,
   ) async {
-    _currentPage = event.currentPage;
     if (event.searchQuery.isEmpty) {
-      _hasReachedMax = false;
-      _repositories.clear();
+      _resetData();
       emit(SearchRepoInitial());
       return;
     }
 
     if (_currentQuery != event.searchQuery || event.isRefresh) {
-      _hasReachedMax = false;
-      _repositories.clear();
+      _resetData();
       _currentQuery = event.searchQuery;
-      _isFetching = false;
     }
 
-    if (_isFetching || _hasReachedMax) return;
+    if (_isFetching || _hasReachedMax) {
+      return;
+    }
 
     _isFetching = true;
 
-    if (event.currentPage == 1) {
+    if (_currentPage == 1) {
       emit(SearchRepoLoading());
     } else {
       emit(SearchRepoLoadingMore(_repositories));
@@ -62,7 +70,7 @@ class SearchRepoBloc extends Bloc<SearchRepoEvent, SearchRepoState> {
       SearchParams(
         searchQuery: _currentQuery,
         page: _currentPage,
-        sort: _sort,
+        sort: '',
       ),
     );
 
@@ -73,12 +81,19 @@ class SearchRepoBloc extends Bloc<SearchRepoEvent, SearchRepoState> {
       },
       (repositories) {
         _isFetching = false;
+        _currentPage++;
 
         if (repositories.isEmpty) {
           _hasReachedMax = true;
+          emit(SearchRepoLoaded(repositories: _repositories));
         } else {
           final updatedRepositories = List<GithubRepository>.from(_repositories)
             ..addAll(repositories);
+
+          updatedRepositories.sort(
+            (a, b) =>
+                a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()),
+          );
 
           _repositories = updatedRepositories;
           emit(SearchRepoLoaded(repositories: _repositories));
@@ -92,7 +107,4 @@ class SearchRepoBloc extends Bloc<SearchRepoEvent, SearchRepoState> {
         ? 'Server Failure'
         : 'Unexpected Error Occurred';
   }
-
-  bool get isFetching => _isFetching;
-  bool get hasReachedMax => _hasReachedMax;
 }
