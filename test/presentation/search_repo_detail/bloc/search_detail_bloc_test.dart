@@ -66,15 +66,18 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 500));
       },
       expect: () => [
-        SearchDetailLoading(),
         SearchDetailLoaded(issues: tIssues),
       ],
       verify: (bloc) {
-        verify(() => mockFetchIssuesByRepo(const FetchIssuesByRepoParams(
+        verify(
+          () => mockFetchIssuesByRepo(
+            const FetchIssuesByRepoParams(
               ownerName: tOwnerName,
               repoName: tRepoName,
               page: 1,
-            ))).called(1);
+            ),
+          ),
+        ).called(1);
       },
     );
 
@@ -88,15 +91,18 @@ void main() {
       act: (bloc) => bloc
           .add(FetchIssuesEvent(ownerName: tOwnerName, repoName: tRepoName)),
       expect: () => [
-        SearchDetailLoading(),
         SearchDetailError(message: 'Server Error'),
       ],
       verify: (bloc) {
-        verify(() => mockFetchIssuesByRepo(const FetchIssuesByRepoParams(
+        verify(
+          () => mockFetchIssuesByRepo(
+            const FetchIssuesByRepoParams(
               ownerName: tOwnerName,
               repoName: tRepoName,
               page: 1,
-            ))).called(1);
+            ),
+          ),
+        ).called(1);
       },
     );
 
@@ -109,23 +115,33 @@ void main() {
       },
       seed: () => SearchDetailLoaded(issues: tIssues),
       act: (bloc) {
-        bloc.add(FetchIssuesEvent(
-            ownerName: tOwnerName, repoName: tRepoName, page: 1));
-        bloc.add(FetchIssuesEvent(
-            ownerName: tOwnerName, repoName: tRepoName, page: 2));
+        bloc.add(
+          FetchIssuesEvent(
+            ownerName: tOwnerName,
+            repoName: tRepoName,
+          ),
+        );
+        bloc.add(
+          FetchIssuesEvent(
+            ownerName: tOwnerName,
+            repoName: tRepoName,
+          ),
+        );
       },
       expect: () => [
-        SearchDetailLoading(),
-        SearchDetailLoaded(issues: tIssues),
         SearchDetailLoadingMore(tIssues),
         SearchDetailLoaded(issues: [...tIssues, ...tIssues]),
       ],
       verify: (bloc) {
-        verify(() => mockFetchIssuesByRepo(const FetchIssuesByRepoParams(
+        verify(
+          () => mockFetchIssuesByRepo(
+            const FetchIssuesByRepoParams(
               ownerName: tOwnerName,
               repoName: tRepoName,
               page: 2,
-            ))).called(1);
+            ),
+          ),
+        ).called(1);
       },
     );
 
@@ -137,7 +153,6 @@ void main() {
         return searchDetailBloc;
       },
       seed: () {
-        searchDetailBloc.hasReachedMax = true;
         return SearchDetailLoaded(issues: tIssues);
       },
       act: (bloc) {

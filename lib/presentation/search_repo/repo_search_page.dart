@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:git_repo_search/core/constants/style_constants.dart';
 import 'package:git_repo_search/core/router/app_router.gr.dart';
 import 'package:git_repo_search/core/utils/extensions.dart';
 import 'package:git_repo_search/core/utils/locator.dart';
@@ -22,14 +23,15 @@ class RepoSearchPage extends StatefulWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) {
     return BlocProvider(
       create: (_) => SearchRepoBloc(
-          fetchRepositoriesBySearch: locator<FetchRepositoriesBySearch>()),
+        fetchRepositoriesBySearch: locator<FetchRepositoriesBySearch>(),
+      ),
       child: this,
     );
   }
 }
 
 class RepoSearchPageState extends State<RepoSearchPage> {
-  final _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -40,21 +42,20 @@ class RepoSearchPageState extends State<RepoSearchPage> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
     if (_scrollController.shouldFetch) {
       final bloc = context.read<SearchRepoBloc>();
-      if (!bloc.isFetching && !bloc.hasReachedMax) {
-        bloc.add(
-          FetchRepositories(
-            searchQuery: _searchController.text,
-            currentPage: bloc.currentPage + 1,
-          ),
-        );
-      }
+      bloc.add(
+        FetchRepositories(
+          searchQuery: _searchController.text,
+        ),
+      );
     }
   }
 
@@ -71,8 +72,10 @@ class RepoSearchPageState extends State<RepoSearchPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('GitHub Repo Search',
-              style: Theme.of(context).textTheme.titleMedium),
+          title: Text(
+            'GitHub Repo Search',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         body: Column(
           children: [
@@ -112,6 +115,7 @@ class RepoSearchPageState extends State<RepoSearchPage> {
                     case SearchRepoLoaded _:
                       final isLoadingMore = state is SearchRepoLoadingMore;
                       return ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         controller: _scrollController,
                         itemCount: state.repositories.length +
                             (isLoadingMore ? 20 : 0),
@@ -130,10 +134,12 @@ class RepoSearchPageState extends State<RepoSearchPage> {
                                   ),
                                 );
                               } else {
-                                context.router.push(SearchDetailRoute(
-                                  ownerName: repo.ownerName,
-                                  repoName: repo.name,
-                                ));
+                                context.router.push(
+                                  SearchDetailRoute(
+                                    ownerName: repo.ownerName,
+                                    repoName: repo.name,
+                                  ),
+                                );
                               }
                             },
                             key: ValueKey(repo.id),
@@ -169,19 +175,6 @@ class RepoSearchPageState extends State<RepoSearchPage> {
 }
 
 class RepoCard extends StatelessWidget {
-  final int id;
-  final String name;
-  final String fullName;
-  final String ownerName;
-  final String ownerAvatarUrl;
-  final String? description;
-  final int size;
-  final int stargazersCount;
-  final int forksCount;
-  final String? license;
-  final int openIssuesCount;
-  final Function() onTap;
-
   const RepoCard({
     required Key super.key,
     required this.id,
@@ -197,13 +190,25 @@ class RepoCard extends StatelessWidget {
     required this.openIssuesCount,
     required this.onTap,
   });
+  final int id;
+  final String name;
+  final String fullName;
+  final String ownerName;
+  final String ownerAvatarUrl;
+  final String? description;
+  final int size;
+  final int stargazersCount;
+  final int forksCount;
+  final String? license;
+  final int openIssuesCount;
+  final Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Card(
-        color: Colors.grey[900],
+        color: ColorConstants.grey900,
         elevation: 2.0,
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Padding(
@@ -227,15 +232,12 @@ class RepoCard extends StatelessWidget {
                           child: Text(
                             fullName,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: TextStyleConstants.bodyMedium,
                           ),
                         ),
                         Text(
                           'By $ownerName',
-                          style: TextStyle(color: Colors.grey[400]),
+                          style: TextStyleConstants.bodyNormal,
                         ),
                       ],
                     ),
@@ -246,7 +248,9 @@ class RepoCard extends StatelessWidget {
               if (description != null && description!.isNotEmpty) ...[
                 Text(
                   description!,
-                  style: TextStyle(color: Colors.grey[400]),
+                  style: TextStyleConstants.bodyNormal,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 10),
               ],
@@ -257,22 +261,24 @@ class RepoCard extends StatelessWidget {
                     child: _InfoRow(
                       icon: Icons.star,
                       value: stargazersCount.toString(),
-                      color: Colors.yellow[600]!,
+                      color: ColorConstants.yellow600,
                     ),
                   ),
                   Flexible(
                     child: _InfoRow(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        icon: Icons.fork_right,
-                        value: forksCount.toString(),
-                        color: Colors.blue[600]!),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      icon: Icons.fork_right,
+                      value: forksCount.toString(),
+                      color: ColorConstants.blue600,
+                    ),
                   ),
                   Flexible(
                     child: _InfoRow(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        icon: Icons.bug_report,
-                        value: openIssuesCount.toString(),
-                        color: Colors.red[600]!),
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      icon: Icons.bug_report,
+                      value: openIssuesCount.toString(),
+                      color: ColorConstants.red600,
+                    ),
                   ),
                 ],
               ),
@@ -306,17 +312,16 @@ class RepoCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.icon,
+    required this.value,
+    this.color = ColorConstants.grey100,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+  });
   final IconData icon;
   final String value;
   final Color color;
   final MainAxisAlignment mainAxisAlignment;
-
-  const _InfoRow({
-    required this.icon,
-    required this.value,
-    this.color = Colors.grey,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -329,7 +334,9 @@ class _InfoRow extends StatelessWidget {
           child: Text(
             value,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyleConstants.bodyNormal.copyWith(
+              color: ColorConstants.grey100,
+            ),
           ),
         ),
       ],
@@ -343,12 +350,12 @@ class ShimmerRepoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.grey[900],
+      color: ColorConstants.grey900,
       elevation: 2.0,
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey[800]!,
-        highlightColor: Colors.grey[700]!,
+        baseColor: ColorConstants.grey800,
+        highlightColor: ColorConstants.grey700,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -356,8 +363,8 @@ class ShimmerRepoCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[800],
+                  const CircleAvatar(
+                    backgroundColor: ColorConstants.grey800,
                     radius: 25,
                   ),
                   const SizedBox(width: 10),
@@ -365,13 +372,13 @@ class ShimmerRepoCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        color: Colors.grey[800],
+                        color: ColorConstants.grey800,
                         width: 150,
                         height: 20,
                       ),
                       const SizedBox(height: 5),
                       Container(
-                        color: Colors.grey[800],
+                        color: ColorConstants.grey800,
                         width: 100,
                         height: 15,
                       ),
@@ -381,7 +388,7 @@ class ShimmerRepoCard extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Container(
-                color: Colors.grey[800],
+                color: ColorConstants.grey800,
                 width: double.infinity,
                 height: 20,
               ),
@@ -416,13 +423,13 @@ class _ShimmerInfoRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          color: Colors.grey[800],
+          color: ColorConstants.grey800,
           width: 20,
           height: 20,
         ),
         const SizedBox(width: 5),
         Container(
-          color: Colors.grey[800],
+          color: ColorConstants.grey800,
           width: 50,
           height: 15,
         ),

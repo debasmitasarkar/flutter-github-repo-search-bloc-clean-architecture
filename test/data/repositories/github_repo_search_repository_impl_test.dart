@@ -34,9 +34,10 @@ void main() {
         repoName: 'flutter',
         repoFullName: 'flutter/flutter',
         owner: Owner(
-            id: 1,
-            avatarUrl: 'https://example.com/avatar.png',
-            login: 'flutter'),
+          id: 1,
+          avatarUrl: 'https://example.com/avatar.png',
+          login: 'flutter',
+        ),
         repoDescription: 'A UI toolkit for building natively compiled apps',
         repoSize: 1000,
         repoStargazersCount: 120000,
@@ -50,11 +51,13 @@ void main() {
     test('should return a list of repositories when the call is successful',
         () async {
       // Arrange
-      when(() => mockRemoteDataSource.getRepositoriesWithSearchQuery(
-            searchQuery: tSearchQuery,
-            page: tPage,
-            sort: tSort,
-          )).thenAnswer((_) async => tRepositoriesModel);
+      when(
+        () => mockRemoteDataSource.getRepositoriesWithSearchQuery(
+          searchQuery: tSearchQuery,
+          page: tPage,
+          sort: tSort,
+        ),
+      ).thenAnswer((_) async => tRepositoriesModel);
 
       // Act
       final result = await repository.getRepositoriesWithSearchQuery(
@@ -65,22 +68,26 @@ void main() {
 
       // Assert
       expect(result, equals(Right(tRepositories)));
-      verify(() => mockRemoteDataSource.getRepositoriesWithSearchQuery(
-            searchQuery: tSearchQuery,
-            page: tPage,
-            sort: tSort,
-          )).called(1);
+      verify(
+        () => mockRemoteDataSource.getRepositoriesWithSearchQuery(
+          searchQuery: tSearchQuery,
+          page: tPage,
+          sort: tSort,
+        ),
+      ).called(1);
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when the call throws a ServerException',
         () async {
       // Arrange
-      when(() => mockRemoteDataSource.getRepositoriesWithSearchQuery(
-            searchQuery: tSearchQuery,
-            page: tPage,
-            sort: tSort,
-          )).thenThrow(ServerException());
+      when(
+        () => mockRemoteDataSource.getRepositoriesWithSearchQuery(
+          searchQuery: tSearchQuery,
+          page: tPage,
+          sort: tSort,
+        ),
+      ).thenThrow(ServerException());
 
       // Act
       final result = await repository.getRepositoriesWithSearchQuery(
@@ -91,11 +98,13 @@ void main() {
 
       // Assert
       expect(result, equals(Left(ServerFailure())));
-      verify(() => mockRemoteDataSource.getRepositoriesWithSearchQuery(
-            searchQuery: tSearchQuery,
-            page: tPage,
-            sort: tSort,
-          )).called(1);
+      verify(
+        () => mockRemoteDataSource.getRepositoriesWithSearchQuery(
+          searchQuery: tSearchQuery,
+          page: tPage,
+          sort: tSort,
+        ),
+      ).called(1);
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });
@@ -121,12 +130,14 @@ void main() {
     test('should return a list of issues when the call is successful',
         () async {
       // Arrange
-      when(() => mockRemoteDataSource.getRepositoryOpenIssues(
-            ownerName: tOwnerName,
-            repositoryName: tRepoName,
-            sort: tSort,
-            page: tPage,
-          )).thenAnswer((_) async => tIssueModels);
+      when(
+        () => mockRemoteDataSource.getRepositoryOpenIssues(
+          ownerName: tOwnerName,
+          repositoryName: tRepoName,
+          sort: tSort,
+          page: tPage,
+        ),
+      ).thenAnswer((_) async => tIssueModels);
 
       // Act
       final result = await repository.getRepositoryOpenIssues(
@@ -138,24 +149,28 @@ void main() {
 
       // Assert
       expect(result, equals(Right(tIssues)));
-      verify(() => mockRemoteDataSource.getRepositoryOpenIssues(
-            ownerName: tOwnerName,
-            repositoryName: tRepoName,
-            sort: tSort,
-            page: tPage,
-          )).called(1);
+      verify(
+        () => mockRemoteDataSource.getRepositoryOpenIssues(
+          ownerName: tOwnerName,
+          repositoryName: tRepoName,
+          sort: tSort,
+          page: tPage,
+        ),
+      ).called(1);
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
 
     test('should return ServerFailure when the call throws a ServerException',
         () async {
       // Arrange
-      when(() => mockRemoteDataSource.getRepositoryOpenIssues(
-            ownerName: tOwnerName,
-            repositoryName: tRepoName,
-            sort: tSort,
-            page: tPage,
-          )).thenThrow(ServerException());
+      when(
+        () => mockRemoteDataSource.getRepositoryOpenIssues(
+          ownerName: tOwnerName,
+          repositoryName: tRepoName,
+          sort: tSort,
+          page: tPage,
+        ),
+      ).thenThrow(ServerException());
 
       // Act
       final result = await repository.getRepositoryOpenIssues(
@@ -167,12 +182,14 @@ void main() {
 
       // Assert
       expect(result, equals(Left(ServerFailure())));
-      verify(() => mockRemoteDataSource.getRepositoryOpenIssues(
-            ownerName: tOwnerName,
-            repositoryName: tRepoName,
-            sort: tSort,
-            page: tPage,
-          )).called(1);
+      verify(
+        () => mockRemoteDataSource.getRepositoryOpenIssues(
+          ownerName: tOwnerName,
+          repositoryName: tRepoName,
+          sort: tSort,
+          page: tPage,
+        ),
+      ).called(1);
       verifyNoMoreInteractions(mockRemoteDataSource);
     });
   });

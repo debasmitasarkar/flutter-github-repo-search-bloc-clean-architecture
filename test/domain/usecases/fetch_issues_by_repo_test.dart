@@ -41,47 +41,55 @@ void main() {
 
   test('should get list of GitHub issues from the repository', () async {
     // Arrange
-    when(() => mockRepository.getRepositoryOpenIssues(
-          ownerName: tOwnerName,
-          repositoryName: tRepoName,
-          page: tPage,
-          sort: tSort,
-        )).thenAnswer((_) async => Right(tGithubIssues));
+    when(
+      () => mockRepository.getRepositoryOpenIssues(
+        ownerName: tOwnerName,
+        repositoryName: tRepoName,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).thenAnswer((_) async => Right(tGithubIssues));
 
     // Act
     final result = await usecase(tParams);
 
     // Assert
     expect(result, Right(tGithubIssues));
-    verify(() => mockRepository.getRepositoryOpenIssues(
-          ownerName: tOwnerName,
-          repositoryName: tRepoName,
-          page: tPage,
-          sort: tSort,
-        )).called(1);
+    verify(
+      () => mockRepository.getRepositoryOpenIssues(
+        ownerName: tOwnerName,
+        repositoryName: tRepoName,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 
   test('should return ServerFailure when repository call fails', () async {
     // Arrange
-    when(() => mockRepository.getRepositoryOpenIssues(
-          ownerName: tOwnerName,
-          repositoryName: tRepoName,
-          page: tPage,
-          sort: tSort,
-        )).thenAnswer((_) async => Left(ServerFailure()));
+    when(
+      () => mockRepository.getRepositoryOpenIssues(
+        ownerName: tOwnerName,
+        repositoryName: tRepoName,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).thenAnswer((_) async => Left(ServerFailure()));
 
     // Act
     final result = await usecase(tParams);
 
     // Assert
     expect(result, Left(ServerFailure()));
-    verify(() => mockRepository.getRepositoryOpenIssues(
-          ownerName: tOwnerName,
-          repositoryName: tRepoName,
-          page: tPage,
-          sort: tSort,
-        )).called(1);
+    verify(
+      () => mockRepository.getRepositoryOpenIssues(
+        ownerName: tOwnerName,
+        repositoryName: tRepoName,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 }

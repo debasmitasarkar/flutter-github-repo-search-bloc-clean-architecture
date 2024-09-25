@@ -45,43 +45,51 @@ void main() {
 
   test('should get list of GitHub repositories from the repository', () async {
     // Arrange
-    when(() => mockRepository.getRepositoriesWithSearchQuery(
-          searchQuery: tSearchQuery,
-          page: tPage,
-          sort: tSort,
-        )).thenAnswer((_) async => Right(tGithubRepositories));
+    when(
+      () => mockRepository.getRepositoriesWithSearchQuery(
+        searchQuery: tSearchQuery,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).thenAnswer((_) async => Right(tGithubRepositories));
 
     // Act
     final result = await usecase(tParams);
 
     // Assert
     expect(result, Right(tGithubRepositories));
-    verify(() => mockRepository.getRepositoriesWithSearchQuery(
-          searchQuery: tSearchQuery,
-          page: tPage,
-          sort: tSort,
-        )).called(1);
+    verify(
+      () => mockRepository.getRepositoriesWithSearchQuery(
+        searchQuery: tSearchQuery,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 
   test('should return ServerFailure when repository call fails', () async {
     // Arrange
-    when(() => mockRepository.getRepositoriesWithSearchQuery(
-          searchQuery: tSearchQuery,
-          page: tPage,
-          sort: tSort,
-        )).thenAnswer((_) async => Left(ServerFailure()));
+    when(
+      () => mockRepository.getRepositoriesWithSearchQuery(
+        searchQuery: tSearchQuery,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).thenAnswer((_) async => Left(ServerFailure()));
 
     // Act
     final result = await usecase(tParams);
 
     // Assert
     expect(result, Left(ServerFailure()));
-    verify(() => mockRepository.getRepositoriesWithSearchQuery(
-          searchQuery: tSearchQuery,
-          page: tPage,
-          sort: tSort,
-        )).called(1);
+    verify(
+      () => mockRepository.getRepositoriesWithSearchQuery(
+        searchQuery: tSearchQuery,
+        page: tPage,
+        sort: tSort,
+      ),
+    ).called(1);
     verifyNoMoreInteractions(mockRepository);
   });
 }

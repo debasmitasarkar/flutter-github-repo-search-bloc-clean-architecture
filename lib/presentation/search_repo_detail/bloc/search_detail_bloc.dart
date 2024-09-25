@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:git_repo_search/core/error/failures.dart';
 import 'package:git_repo_search/domain/entities/github_issue.dart';
 import 'package:git_repo_search/domain/usecases/fetch_issues_by_repo.dart';
@@ -7,26 +7,38 @@ import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_deta
 import 'package:git_repo_search/presentation/search_repo_detail/bloc/search_detail_state.dart';
 
 class SearchDetailBloc extends Bloc<SearchDetailEvent, SearchDetailState> {
-  final FetchIssuesByRepo fetchIssuesByRepo;
-  int _currentPage = 1;
-  bool hasReachedMax = false;
-  List<GithubIssue> _issues = [];
-
-  int get currentPage => _currentPage;
-
   SearchDetailBloc({required this.fetchIssuesByRepo})
       : super(SearchDetailInitial()) {
     on<FetchIssuesEvent>(_onFetchIssues);
   }
+  final FetchIssuesByRepo fetchIssuesByRepo;
+  int _currentPage = 1;
+  bool _hasReachedMax = false;
+  bool _isFetching = false;
+  List<GithubIssue> _issues = [];
+
+  void _resetData() {
+    _isFetching = false;
+    _hasReachedMax = false;
+    _currentPage = 1;
+    _issues.clear();
+  }
 
   Future<void> _onFetchIssues(
-      FetchIssuesEvent event, Emitter<SearchDetailState> emit) async {
-    if (hasReachedMax) return;
-    _currentPage = event.page;
+    FetchIssuesEvent event,
+    Emitter<SearchDetailState> emit,
+  ) async {
+    if (event.isRefresh) {
+      _resetData();
+    }
 
-    if (_currentPage == 1) {
-      emit(SearchDetailLoading());
-    } else {
+    if (_hasReachedMax || _isFetching) {
+      return;
+    }
+
+    _isFetching = true;
+
+    if (_currentPage != 1) {
       emit(SearchDetailLoadingMore(_issues));
     }
 
@@ -40,15 +52,18 @@ class SearchDetailBloc extends Bloc<SearchDetailEvent, SearchDetailState> {
     );
 
     failureOrIssues.fold(
-      (failure) =>
-          emit(SearchDetailError(message: _mapFailureToMessage(failure))),
+      (failure) {
+        _resetData();
+        emit(SearchDetailError(message: _mapFailureToMessage(failure)));
+      },
       (issues) {
+        _isFetching = false;
+        _currentPage++;
+
         final updatedIssues = List<GithubIssue>.from(_issues)..addAll(issues);
         _issues = updatedIssues;
         if (issues.isEmpty) {
-          hasReachedMax = true;
-        } else {
-          _currentPage++;
+          _hasReachedMax = true;
         }
         emit(SearchDetailLoaded(issues: _issues));
       },

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:git_repo_search/core/constants/api_constants.dart';
 import 'package:git_repo_search/core/error/exceptions.dart';
 import 'package:git_repo_search/data/models/github_issue_model.dart';
 import 'package:git_repo_search/data/models/github_repository_model.dart';
@@ -21,9 +22,9 @@ abstract class GitHubRepoRemoteDataSource {
 }
 
 class GitRepoRemoteDatasourceImpl implements GitHubRepoRemoteDataSource {
-  final http.Client client;
-
   GitRepoRemoteDatasourceImpl({required this.client});
+  final http.Client client;
+  final int perPageQuantity = 30;
 
   @override
   Future<List<GithubRepositoryModel>> getRepositoriesWithSearchQuery({
@@ -31,15 +32,24 @@ class GitRepoRemoteDatasourceImpl implements GitHubRepoRemoteDataSource {
     required int page,
     required String sort,
   }) async {
+    final Map<String, String> queryMap = {
+      'q': '$searchQuery in:name',
+      'sort': sort,
+      'page': page.toString(),
+      'per_page': perPageQuantity.toString(),
+      'order': 'asc',
+    };
     final response = await client.get(
-      Uri.parse(
-          'https://api.github.com/search/repositories?q=$searchQuery+in:name&sort=$sort&page=$page&per_page=20&order=asc'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      Uri.https(
+        ApiConstants.baseUrl,
+        ApiConstants.searchEndPoint,
+        queryMap,
+      ),
+      headers: ApiConstants.headers,
     );
 
     if (response.statusCode == 200) {
+      // ignore: avoid_dynamic_calls
       final List<dynamic> data = jsonDecode(response.body)['items'];
       return data.map((e) => GithubRepositoryModel.fromJson(e)).toList();
     } else {
@@ -54,12 +64,19 @@ class GitRepoRemoteDatasourceImpl implements GitHubRepoRemoteDataSource {
     required String sort,
     required int page,
   }) async {
+    final Map<String, dynamic> queryMap = {
+      'sort': sort,
+      'page': page.toString(),
+      'per_page': perPageQuantity.toString(),
+      'order': 'asc',
+    };
     final response = await client.get(
-      Uri.parse(
-          'https://api.github.com/repos/$ownerName/$repositoryName/issues?state=open&sort=$sort&per_page=20&page=$page'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      Uri.https(
+        ApiConstants.baseUrl,
+        ApiConstants.getIssuesEndPoint(ownerName, repositoryName),
+        queryMap,
+      ),
+      headers: ApiConstants.headers,
     );
 
     if (response.statusCode == 200) {
